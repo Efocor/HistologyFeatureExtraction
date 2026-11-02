@@ -102,7 +102,10 @@ workflow {
         intersect_all.out.dataset_patches.combine(seg_done),
         wsi_dir, trident_dir)
 
-    coords_done = extract_coordinates_batch.out.coords_done.ifEmpty(channel.of(true))
+    coords_done = extract_coordinates_batch.out.coords_done
+    .ifEmpty(true)
+    .collect()
+    .map { true }
 
     patch_features_batch(
         intersect_all.out.dataset_features.combine(coords_done.first()),
