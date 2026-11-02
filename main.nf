@@ -26,10 +26,23 @@ workflow intersect_all {
         .map { row -> params.outdir.replaceAll(/\/$/, '') + "/contours/" + row[0] + ".jpg" }
         .collect()
 
-    intersect_patches(all_combinations_patches, output_dir, "patches", dataset_join)
-    intersect_features(all_combinations_features, output_dir, "features", dataset_join)
-    intersect_slide_features(all_combinations_slide_features, output_dir, "slide_features", dataset_join)
-    intersect_segmentation(all_combinations_segmentation, output_dir, "segmentation", dataset_join)
+    intersect_patches(
+        all_combinations_patches, output_dir,
+        "patches", dataset_join, unique_configs
+    )
+    intersect_features(
+        all_combinations_features, output_dir,
+        "features", dataset_join, unique_feature_encoders
+    )
+    intersect_slide_features(
+        all_combinations_slide_features, output_dir,
+        "slide_features", dataset_join, unique_slide_encoders
+    )
+    intersect_segmentation(
+        all_combinations_segmentation, output_dir,
+        "segmentation", dataset_join, unique_configs
+    )
+
     emit:
     dataset_patches = intersect_patches.out.dataset_batch
     dataset_features = intersect_features.out.dataset_batch
