@@ -119,20 +119,29 @@ workflow {
         intersect_all.out.dataset_patches.combine(seg_done),
         wsi_dir, trident_dir)
 
+    // wait all patches
     coords_done = extract_coordinates_batch.out.coords_done
-    .ifEmpty(true)
-    .collect()
-    .map { true }
-
+        .toList()
+        .map { true }
+    
+    // extract patch features only after
     patch_features_batch(
-        intersect_all.out.dataset_features.combine(coords_done.first()),
-        wsi_dir, trident_dir)
-
-    patch_features_done = patch_features_batch.out.patch_features_done.ifEmpty(channel.of(true))
-
+        intersect_all.out.dataset_features.combine(coords_done),
+        wsi_dir,
+        trident_dir
+    )
+    
+    // wait ALL patchfeatures
+    patch_features_done = patch_features_batch.out.patch_features_done
+        .toList()
+        .map { true }
+    
+    // execute slide features
     slide_features_batch(
-        intersect_all.out.dataset_slide_features.combine(patch_features_done.first()),
-        wsi_dir, trident_dir)
+        intersect_all.out.dataset_slide_features.combine(patch_features_done),
+        wsi_dir,
+        trident_dir
+    )
 
     intersect_all.out.dataset_slide_features.view()
 }
