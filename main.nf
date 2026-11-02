@@ -65,8 +65,12 @@ workflow {
         }
 
     unique_configs = all_encoders
-        .map { encoder_tuple -> 
-            tuple(encoder_tuple[2], encoder_tuple[3], encoder_tuple[4], encoder_tuple[5]) // (mag, patch_size, overlap, batch_size)
+        .map { encoder_tuple ->
+            tuple(
+                encoder_tuple[2],  // mag
+                encoder_tuple[3],  // patch_size
+                encoder_tuple[4]   // overlap
+            )
         }
         .unique()
 
